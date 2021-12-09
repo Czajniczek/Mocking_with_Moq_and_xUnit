@@ -13,7 +13,9 @@ namespace CreditCardApplications.Tests
                 GrossAnnualIncome = 100_000
             };
 
-            var sut = new CreditCardApplicationEvaluator(null);
+            var mockValidator = new Mock<IFrequentFlyerNumberValidator>();
+
+            var sut = new CreditCardApplicationEvaluator(mockValidator.Object);
             var decision = sut.Evaluate(application);
 
             Assert.Equal(CreditCardApplicationDecision.AutoAccepted, decision);
@@ -27,7 +29,9 @@ namespace CreditCardApplications.Tests
                 Age = 19
             };
 
-            var sut = new CreditCardApplicationEvaluator(null);
+            var mockValidator = new Mock<IFrequentFlyerNumberValidator>();
+
+            var sut = new CreditCardApplicationEvaluator(mockValidator.Object);
             var decision = sut.Evaluate(application);
 
             Assert.Equal(CreditCardApplicationDecision.ReferredToHuman, decision);
