@@ -10,9 +10,17 @@ namespace CreditCardApplications
         private const int HighIncomeThreshold = 100_000; //Wartość wysokiego progu dochodów
         private const int LowIncomeThreshold = 20_000; //Wartość niskiego progu dochodów
 
+        public int ValidatorLookupCount { get; private set; }
+
         public CreditCardApplicationEvaluator(IFrequentFlyerNumberValidator validator)
         {
             _validator = validator ?? throw new ArgumentNullException(nameof(validator));
+            _validator.ValidatorLookupPerformed += ValidatorLookupPerformed;
+        }
+
+        private void ValidatorLookupPerformed(object sender, EventArgs e)
+        {
+            ValidatorLookupCount++;
         }
 
         public CreditCardApplicationDecision Evaluate(CreditCardApplication application)
