@@ -1,4 +1,5 @@
 using Xunit;
+using Moq;
 
 namespace CreditCardApplications.Tests
 {
