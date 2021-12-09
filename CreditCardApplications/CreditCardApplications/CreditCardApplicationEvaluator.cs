@@ -19,6 +19,8 @@ namespace CreditCardApplications
         {
             if (application.GrossAnnualIncome >= HighIncomeThreshold) return CreditCardApplicationDecision.AutoAccepted;
 
+            if (_validator.LicenseKey == "EXPIRED") return CreditCardApplicationDecision.ReferredToHuman;
+
             var isValidFrequentFlyerNumber = _validator.IsValid(application.FrequentFlyerNumber);
             if (!isValidFrequentFlyerNumber) return CreditCardApplicationDecision.ReferredToHuman;
 

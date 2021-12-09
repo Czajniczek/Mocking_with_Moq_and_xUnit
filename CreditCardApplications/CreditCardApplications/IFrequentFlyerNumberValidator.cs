@@ -5,5 +5,7 @@ namespace CreditCardApplications
         bool IsValid(string frequentFlyerNumber);
 
         void IsValid(string frequentFlyerNumber, out bool isValid);
+
+        string LicenseKey { get; }
     }
 }

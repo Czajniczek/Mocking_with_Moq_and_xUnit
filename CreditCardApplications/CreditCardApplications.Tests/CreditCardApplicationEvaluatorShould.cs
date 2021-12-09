@@ -67,8 +67,26 @@ namespace CreditCardApplications.Tests
         {
             var application = new CreditCardApplication();
 
-            var mockValidator = new Mock<IFrequentFlyerNumberValidator>(MockBehavior.Strict);
+            var mockValidator = new Mock<IFrequentFlyerNumberValidator>();
             mockValidator.Setup(x => x.IsValid(It.IsAny<string>())).Returns(false);
+
+            var sut = new CreditCardApplicationEvaluator(mockValidator.Object);
+            var decision = sut.Evaluate(application);
+
+            Assert.Equal(CreditCardApplicationDecision.ReferredToHuman, decision);
+        }
+
+        [Fact]
+        public void ReferWhenLicenseKeyExpired()
+        {
+            var application = new CreditCardApplication
+            {
+                Age = 42
+            };
+
+            var mockValidator = new Mock<IFrequentFlyerNumberValidator>();
+            mockValidator.Setup(x => x.IsValid(It.IsAny<string>())).Returns(true);
+            mockValidator.Setup(x => x.LicenseKey).Returns("EXPIRED");
 
             var sut = new CreditCardApplicationEvaluator(mockValidator.Object);
             var decision = sut.Evaluate(application);
