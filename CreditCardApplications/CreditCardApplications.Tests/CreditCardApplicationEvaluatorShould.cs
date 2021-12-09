@@ -1,5 +1,5 @@
-using Xunit;
 using Moq;
+using Xunit;
 
 namespace CreditCardApplications.Tests
 {
@@ -35,6 +35,25 @@ namespace CreditCardApplications.Tests
             var decision = sut.Evaluate(application);
 
             Assert.Equal(CreditCardApplicationDecision.ReferredToHuman, decision);
+        }
+
+        [Fact]
+        public void DeclineLowIncomeApplications()
+        {
+            var application = new CreditCardApplication
+            {
+                GrossAnnualIncome = 19_999,
+                Age = 42,
+                FrequentFlyerNumber = "x"
+            };
+
+            var mockValidator = new Mock<IFrequentFlyerNumberValidator>();
+            mockValidator.Setup(x => x.IsValid("x")).Returns(true);
+
+            var sut = new CreditCardApplicationEvaluator(mockValidator.Object);
+            var decision = sut.Evaluate(application);
+
+            Assert.Equal(CreditCardApplicationDecision.AutoDeclined, decision);
         }
     }
 }
