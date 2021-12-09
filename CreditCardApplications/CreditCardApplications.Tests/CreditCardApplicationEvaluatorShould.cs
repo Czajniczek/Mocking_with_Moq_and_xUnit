@@ -84,9 +84,23 @@ namespace CreditCardApplications.Tests
                 Age = 42
             };
 
+            //var mockValidator = new Mock<IFrequentFlyerNumberValidator>();
+            //mockValidator.Setup(x => x.IsValid(It.IsAny<string>())).Returns(true);
+            //mockValidator.Setup(x => x.LicenseKey).Returns(GetLicenseKeyExpiryString());
+
+            //var mockLicenseData = new Mock<ILicenseData>();
+            //mockLicenseData.Setup(x => x.LicenseKey).Returns("EXPIRED");
+
+            //var mockServiceInfo = new Mock<IServiceInformation>();
+            //mockServiceInfo.Setup(x => x.License).Returns(mockLicenseData.Object);
+
+            //var mockValidator = new Mock<IFrequentFlyerNumberValidator>();
+            //mockValidator.Setup(x => x.ServiceInformation).Returns(mockServiceInfo.Object);
+            //mockValidator.Setup(x => x.IsValid(It.IsAny<string>())).Returns(true);
+
             var mockValidator = new Mock<IFrequentFlyerNumberValidator>();
+            mockValidator.Setup(x => x.ServiceInformation.License.LicenseKey).Returns("EXPIRED");
             mockValidator.Setup(x => x.IsValid(It.IsAny<string>())).Returns(true);
-            mockValidator.Setup(x => x.LicenseKey).Returns(GetLicenseKeyExpiryString());
 
             var sut = new CreditCardApplicationEvaluator(mockValidator.Object);
             var decision = sut.Evaluate(application);
