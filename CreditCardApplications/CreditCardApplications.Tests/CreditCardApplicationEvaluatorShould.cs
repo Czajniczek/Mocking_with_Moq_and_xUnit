@@ -112,5 +112,24 @@ namespace CreditCardApplications.Tests
         }
 
         public string GetLicenseKeyExpiryString() => "EXPIRED";
+
+        [Fact]
+        public void UseDetailedLookupForOlderApplications()
+        {
+            var application = new CreditCardApplication
+            {
+                Age = 30
+            };
+
+            var mockValidator = new Mock<IFrequentFlyerNumberValidator>();
+            //mockValidator.SetupProperty(x => x.ValidationMode);
+            mockValidator.SetupAllProperties();
+            mockValidator.Setup(x => x.ServiceInformation.License.LicenseKey).Returns("OK");
+
+            var sut = new CreditCardApplicationEvaluator(mockValidator.Object);
+            sut.Evaluate(application);
+
+            Assert.Equal(ValidationMode.Detailed, mockValidator.Object.ValidationMode);
+        }
     }
 }
