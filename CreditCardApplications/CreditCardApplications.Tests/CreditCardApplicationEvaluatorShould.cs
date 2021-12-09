@@ -8,18 +8,24 @@ namespace CreditCardApplications.Tests
 {
     public class CreditCardApplicationEvaluatorShould
     {
+        private Mock<IFrequentFlyerNumberValidator> _mockValidator;
+        private CreditCardApplicationEvaluator _sut;
+
+        public CreditCardApplicationEvaluatorShould()
+        {
+            _mockValidator = new Mock<IFrequentFlyerNumberValidator>();
+            _mockValidator.SetupAllProperties();
+            _mockValidator.Setup(x => x.ServiceInformation.License.LicenseKey).Returns("OK");
+            _mockValidator.Setup(x => x.IsValid(It.IsAny<string>())).Returns(true);
+
+            _sut = new CreditCardApplicationEvaluator(_mockValidator.Object);
+        }
+
         [Fact]
         public void AcceptHighIncomeApplications()
         {
-            var application = new CreditCardApplication
-            {
-                GrossAnnualIncome = 100_000
-            };
-
-            var mockValidator = new Mock<IFrequentFlyerNumberValidator>();
-
-            var sut = new CreditCardApplicationEvaluator(mockValidator.Object);
-            var decision = sut.Evaluate(application);
+            var application = new CreditCardApplication { GrossAnnualIncome = 100_000 };
+            var decision = _sut.Evaluate(application);
 
             Assert.Equal(CreditCardApplicationDecision.AutoAccepted, decision);
         }
@@ -27,17 +33,11 @@ namespace CreditCardApplications.Tests
         [Fact]
         public void ReferYoungApplications()
         {
-            var application = new CreditCardApplication
-            {
-                Age = 19
-            };
+            var application = new CreditCardApplication { Age = 19 };
 
-            var mockValidator = new Mock<IFrequentFlyerNumberValidator>();
-            mockValidator.DefaultValue = DefaultValue.Mock;
-            mockValidator.Setup(x => x.IsValid(It.IsAny<string>())).Returns(true);
+            _mockValidator.DefaultValue = DefaultValue.Mock;
 
-            var sut = new CreditCardApplicationEvaluator(mockValidator.Object);
-            var decision = sut.Evaluate(application);
+            var decision = _sut.Evaluate(application);
 
             Assert.Equal(CreditCardApplicationDecision.ReferredToHuman, decision);
         }
